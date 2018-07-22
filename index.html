@@ -23,7 +23,7 @@
 		}
 		.below { color: red; }
 		td { color: blue; }
-		div#haiku-print { white-space: pre; }
+		div#haiku-print { white-space: pre; font-family: 'Cambria', cursive;}
 		input { width: 100%; }
 	</style>
 
@@ -35,20 +35,20 @@
 			<tr>
 				<td class='target'>5</td>
 				<td class='counter  below'>0</td>
-				<td><input type='url' class='haiku' /></td>
+				<td><input type='email' class='haiku' /></td>
 			</tr>
 			<tr>
 				<td class='target'>5</td>
 				<td class='counter  below'>0</td>
-				<td><input type='url' class='haiku' /></td>
+				<td><input type='email' class='haiku' /></td>
 			</tr>
 			<tr>
 				<td class='target'>5</td>
 				<td class='counter  below'>0</td>
-				<td><input type='url' class='haiku' /></td>
+				<td><input type='email' class='haiku' /></td>
 			</tr>
 		</table>
-		<p>Denote syllable with: (<code>/</code>).</p>
+		<p>Denote syllable with: <code>@</code>.</p>
 		<div id='haiku-print'></div>
 	</div>
 	<script>
@@ -56,7 +56,7 @@
 		haikuri['correct_counts'] = [5, 7, 5];
 		haikuri['counts'] = [0, 0, 0];
 		
-		const SYLLABLE_MARKER = /[/ ]/; // single syllable words break naturally with spaces.
+		const SYLLABLE_MARKER = /[@ ]/; // single syllable words break naturally with spaces.
 
 		for (let haiku of document.querySelectorAll('.haiku')) {
 			haiku.onkeyup = (keyEvent) => {
@@ -92,7 +92,7 @@
 			haiku_print.innerText = '';
 
 			for (let line of haiku) {
-				haiku_print.innerText += line.value.replace(/\//g, '') + '\n';
+				haiku_print.innerText += line.value.replace(/@/g, '') + '\n';
 			}
 		}
 	</script>
