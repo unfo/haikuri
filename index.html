@@ -5,9 +5,10 @@
 	<style>
 		body { 
 			font-family: Consolas, monospace; 
-			font-size: 1.5em; 
+			font-size: 1.2em; 
 			padding: 2em; 
 		}
+		h1 { font-size: 1.1em; }
 		code { display: inline; }
 		#haiku {
 			display: block; 
@@ -20,63 +21,61 @@
 			display: block;
 			vertical-align: top; 
 		}
-		span.current { border-bottom: 2px solid #000; }
-		span.below { color: red; }
-		span { color: blue; }
+		.below { color: red; }
+		td { color: blue; }
 		div#haiku-print { white-space: pre; }
+		input { width: 100%; }
 	</style>
 
 </head>
 <body>
 	<div id='iot'>
 		<h1>Haiku (俳句)</h1>
-		<p>
-			<span id='target'>5 7 5</span><br/>
-			<span id='line1' class='counter current below'>0</span> <span id='line2' class='counter below'>0</span> <span id='line3' class='counter below'>0</span><br/>
-			Denote syllable with: (<code>-</code>).
-		</p>
-
-		<textarea id='haiku'></textarea>
+		<table>
+			<tr>
+				<td class='target'>5</td>
+				<td class='counter  below'>0</td>
+				<td><input type='url' class='haiku' /></td>
+			</tr>
+			<tr>
+				<td class='target'>5</td>
+				<td class='counter  below'>0</td>
+				<td><input type='url' class='haiku' /></td>
+			</tr>
+			<tr>
+				<td class='target'>5</td>
+				<td class='counter  below'>0</td>
+				<td><input type='url' class='haiku' /></td>
+			</tr>
+		</table>
+		<p>Denote syllable with: (<code>/</code>).</p>
 		<div id='haiku-print'></div>
 	</div>
 	<script>
 		var haikuri = {};
-		haikuri['current_line'] = 1;
 		haikuri['correct_counts'] = [5, 7, 5];
 		haikuri['counts'] = [0, 0, 0];
-		haikuri['last_key'] = '';
-		var haiku = document.querySelector('#haiku');
-		const SYLLABLE_MARKER = /[- ]/; // single syllable words break naturally with spaces.
+		
+		const SYLLABLE_MARKER = /[/ ]/; // single syllable words break naturally with spaces.
 
-		// prevent too many lines.
-		haiku.onkeydown = (keyEvent) => {
-			let haiku = document.querySelector('#haiku');
-			let lines = haiku.value.split('\n');
-			let line = lines.length - 1;
-			if (line >= 2 && keyEvent.key == 'Enter') {
-				return false;
+		for (let haiku of document.querySelectorAll('.haiku')) {
+			haiku.onkeyup = (keyEvent) => {
+				let counts = [0, 0, 0];
+				let haikus = document.querySelectorAll('.haiku');
+				for (let i = 0; i < 3 ; i++) {
+					counts[i] = haikus[i].value.trim().split(SYLLABLE_MARKER).length
+				}
+				haikuri['counts'] = counts;
+
+				refreshCounters(counts);
+				printHaiku();
 			}
 		}
-		haiku.onkeyup = (keyEvent) => {
-			let haiku = document.querySelector('#haiku');
-			let lines = haiku.value.split('\n');
-			let line = lines.length - 1;
-			let counts = [0, 0, 0];
-			for (let i = 0; i <= line; i++) {
-				counts[i] = lines[i].trim().split(SYLLABLE_MARKER).length
-			}
-			haikuri['counts'] = counts;
-			haikuri['current_line'] = line;
 
-			refreshCounters(counts, line);
-			printHaiku();
-		}
-
-		function refreshCounters(counts, lineno) {
+		function refreshCounters(counts) {
 			let counters = document.querySelectorAll('.counter');
 			
 			for (let i = 0; i < counts.length; i++) {
-				counters[i].classList.remove('current');
 				counters[i].innerText = counts[i];
 				if (haikuri['correct_counts'][i] == counts[i]) {
 					counters[i].classList.remove('below');
@@ -85,15 +84,16 @@
 				}
 			}
 
-			counters[lineno].classList.add('current');
 
 		}
 		function printHaiku() {
-			let haiku = document.querySelector('#haiku');
+			let haiku = document.querySelectorAll('.haiku');
 			let haiku_print = document.querySelector('#haiku-print');
-			let html_haiku = haiku.value.replace(/-/g, '');
-			haiku_print.innerText = html_haiku;
+			haiku_print.innerText = '';
 
+			for (let line of haiku) {
+				haiku_print.innerText += line.value.replace(/\//g, '') + '\n';
+			}
 		}
 	</script>
 </body>
